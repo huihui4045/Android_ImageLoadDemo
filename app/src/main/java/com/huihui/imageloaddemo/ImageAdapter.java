@@ -2,6 +2,7 @@ package com.huihui.imageloaddemo;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +21,8 @@ public class ImageAdapter extends BaseAdapter {
 
     private String[] datas;
 
+    private String TAG=this.getClass().getSimpleName();
+
 
     private LayoutInflater mInflater;
     private Drawable mDefaultBitmapDrawable;
@@ -27,12 +30,17 @@ public class ImageAdapter extends BaseAdapter {
 
     private ImageLoader imageLoader;
 
-    public ImageAdapter(String[] datas, Context context, ImageLoader imageLoader, int mImageWidth) {
+    private  boolean mCanGetBitmapFromNetWork;
+    private  boolean mIsGridViewIdle;
+
+    public ImageAdapter(String[] datas, Context context, ImageLoader imageLoader, int mImageWidth,boolean mCanGetBitmapFromNetWork,boolean mIsGridViewIdle) {
         this.datas = datas;
         mInflater = LayoutInflater.from(context);
         mDefaultBitmapDrawable = context.getResources().getDrawable(R.mipmap.ic_launcher);
         this.imageLoader = imageLoader;
         this.mImageWidth = mImageWidth;
+        this.mCanGetBitmapFromNetWork=mCanGetBitmapFromNetWork;
+        this.mIsGridViewIdle=mIsGridViewIdle;
     }
 
     @Override
@@ -80,9 +88,19 @@ public class ImageAdapter extends BaseAdapter {
             imageView.setImageDrawable(mDefaultBitmapDrawable);
         }
 
-        imageView.setTag(data);
 
-        imageLoader.loadBitmap(data, imageView, mImageWidth, mImageWidth);
+        Log.e(TAG,"mIsGridViewIdle:"+mIsGridViewIdle);
+        Log.e(TAG,"mCanGetBitmapFromNetWork:"+mCanGetBitmapFromNetWork);
+
+
+        if (mIsGridViewIdle&&mCanGetBitmapFromNetWork){
+
+            imageView.setTag(data);
+
+            imageLoader.loadBitmap(data, imageView, mImageWidth, mImageWidth);
+        }
+
+
 
 
         return convertView;
